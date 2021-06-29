@@ -212,7 +212,7 @@ private:
   depress_( double w, double kminus, double Kplus_triplet_ )
   {
     double new_w = std::abs( w ) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
-    return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
+    return copysign( new_w > Wmin_ ? new_w : Wmin_, Wmax_ );
   }
 
   // data members of each connection
@@ -226,6 +226,7 @@ private:
   double Kplus_;
   double Kplus_triplet_;
   double Wmax_;
+  double Wmin_;
   double t_lastspike_;
 };
 
@@ -301,6 +302,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   , Kplus_( 0.0 )
   , Kplus_triplet_( 0.0 )
   , Wmax_( 100.0 )
+  , Wmin_( 0.0 )
   , t_lastspike_( 0.0 )
 {
 }
@@ -319,6 +321,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
   , Kplus_( rhs.Kplus_ )
   , Kplus_triplet_( rhs.Kplus_triplet_ )
   , Wmax_( rhs.Wmax_ )
+  , Wmin_( rhs.Wmin_ )
   , t_lastspike_( rhs.t_lastspike_ )
 {
 }
@@ -338,6 +341,7 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double >( d, names::Kplus, Kplus_ );
   def< double >( d, names::Kplus_triplet, Kplus_triplet_ );
   def< double >( d, names::Wmax, Wmax_ );
+  def< double >( d, names::Wmin, Wmin_ );
 }
 
 template < typename targetidentifierT >
@@ -355,6 +359,7 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double >( d, names::Kplus, Kplus_ );
   updateValue< double >( d, names::Kplus_triplet, Kplus_triplet_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
+  updateValue< double >( d, names::Wmin, Wmin_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
